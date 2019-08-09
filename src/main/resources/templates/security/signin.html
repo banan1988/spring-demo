@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org">
+<head>
+    <meta charset="utf-8">
+    <title th:text="${appName + ' - Sign in'}">appName - Sign in</title>
+    <link href="/images/favicon.png" rel="shortcut icon" type="image/x-icon" th:href="@{/images/favicon.png}"/>
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link href="/core/css/floating-labels.css" rel="stylesheet" media="screen" th:href="@{/core/css/floating-labels.css}"/>
+</head>
+<body>
+<form class="form-signin" action="#" method="post" th:action="@{/authenticate}">
+    <div class="text-center mb-4">
+        <img class="img-fluid" th:src="@{/images/logo.svg}" alt="logo"/>
+    </div>
+
+    <div class="text-center mb-4">
+        <h2 class="h3 mb-3 font-weight-normal">Please sign in</h2>
+        <div class="alert alert-success" role="alert">You have been signed out</div>
+        <div class="alert alert-success" role="alert">You have been signed out</div>
+    </div>
+
+    <div class="form-label-group">
+        <input type="text" id="username" class="form-control" placeholder="Username" required autofocus>
+        <label for="username">Username</label>
+    </div>
+
+    <div class="form-label-group">
+        <input type="password" id="password" class="form-control" placeholder="Password" required>
+        <label for="password">Password</label>
+    </div>
+
+    <div class="checkbox mb-3">
+        <label>
+            <input type="checkbox" value="remember-me"> Remember me
+        </label>
+    </div>
+    <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>
+</form>
+</body>
+</html>

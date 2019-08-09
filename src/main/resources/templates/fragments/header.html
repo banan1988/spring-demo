@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
+<head>
+</head>
+<body>
+<header>
+    <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark" th:fragment="header">
+        <img class="img-fluid float-left mr-1" th:src="@{/images/logo-72x72.png}" width="36" height="36" alt="logo"/>
+        <a class="navbar-brand" href="#" th:text="${appName}">appName</a>
+        <div class="collapse navbar-collapse" id="navbarCollapse">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item" th:classappend="${module == 'home' ? 'active' : ''}">
+                    <a class="nav-link" href="#" th:href="@{/}">Home</a>
+                </li>
+                <li class="nav-item" th:classappend="${module == 'tasks' ? 'active' : ''}">
+                    <a class="nav-link" href="#" th:href="@{/task}">Tasks</a>
+                </li>
+                <li class="nav-item" th:classappend="${module == 'signin' ? 'active' : ''}">
+                    <a class="nav-link" href="#" th:href="@{/signin}">Sign In</a>
+                </li>
+            </ul>
+            <form class="form-inline">
+                <div class="input-group">
+                    <input class="form-control" type="text" placeholder="Search" aria-label="Search">
+                    <div class="input-group-append">
+                        <button type="submit" class="btn btn-light">
+                            <span class="glyphicon glyphicon-search" aria-hidden="true"></span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            <ul class="navbar-nav navbar-right ml-5">
+                <li class="nav-item">
+                    <span class="nav-link disabled px-0">Hi, </span>
+                </li>
+                <li class="nav-item active">
+                    <a class="nav-link text-capitalize" href="#" th:href="@{/user}" sec:authentication="name">username</a>
+                </li>
+                <li sec:authorize="isAuthenticated()">
+                    <form method="post" action="#" th:action="@{/logout}">
+                        <button type="submit" class="btn btn-outline-danger" title="Logout">
+                            <span class="glyphicon glyphicon-log-out" aria-hidden="true"></span>
+                        </button>
+                    </form>
+                </li>
+            </ul>
+        </div>
+    </nav>
+</header>
+</body>
+</html>
