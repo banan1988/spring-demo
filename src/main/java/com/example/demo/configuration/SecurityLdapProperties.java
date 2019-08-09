@@ -1,13 +1,11 @@
 package com.example.demo.configuration;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Setter
-@Getter
+@Data
 @ConfigurationProperties(prefix = "security.ldap")
-public class SecurityLdapProperties {
+class SecurityLdapProperties {
 
     private String userDnPatterns;
     private String groupSearchBase;

@@ -11,15 +11,17 @@ import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.authentication.configurers.provisioning.InMemoryUserDetailsManagerConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
+import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 import java.util.Set;
 
 @Configuration
-@EnableConfigurationProperties(SecurityLdapProperties.class)
+@EnableConfigurationProperties({SecurityLdapProperties.class, SecurityMemoryProperties.class})
 @EnableWebSecurity
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
@@ -29,13 +31,16 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private final String method;
     private final SecurityLdapProperties ldapProperties;
+    private final SecurityMemoryProperties memoryProperties;
 
     public SecurityConfiguration(@Value("${security.method}") final String method,
-                                 final SecurityLdapProperties ldapProperties) {
+                                 final SecurityLdapProperties ldapProperties,
+                                 final SecurityMemoryProperties memoryProperties) {
         Preconditions.checkArgument(ALLOWED_METHODS.contains(method), "Incorrect method. Allowed methods: " + ALLOWED_METHODS);
 
         this.method = method;
         this.ldapProperties = ldapProperties;
+        this.memoryProperties = memoryProperties;
     }
 
 //    @Autowired
@@ -61,8 +66,8 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 memoryAuthentication(auth);
                 return;
             default:
-                throw new Exception("Not found implementation for provided method: " + this.method +
-                        ". Allowed methods: " + ALLOWED_METHODS);
+                final String msg = String.format("Not found implementation for provided method: %s. Allowed methods: %s", this.method, ALLOWED_METHODS);
+                throw new Exception(msg);
         }
     }
 
@@ -77,23 +82,20 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .passwordCompare()
                 .passwordEncoder(new LdapShaPasswordEncoder())
                 .passwordAttribute(ldapProperties.getPasswordAttribute());
-
-//                .userDnPatterns(“uid={0},ou=people”)
-//                .groupSearchBase(“ou=groups”)
-//                .url(“ldap://localhost:8389/dc=springframework,dc=org”)
-//                .passwordAttribute(“adminpassword”);
     }
 
     private void memoryAuthentication(final AuthenticationManagerBuilder auth) throws Exception {
-        auth
+        InMemoryUserDetailsManagerConfigurer<AuthenticationManagerBuilder> builder = auth
                 .inMemoryAuthentication()
-                .withUser("user")
-                .password("{noop}password")
-                .roles("USER")
-                .and()
-                .withUser("admin")
-                .password("admin")
-                .roles("USER", "ADMIN");
+                .passwordEncoder(NoOpPasswordEncoder.getInstance());
+
+        for (final SecurityMemoryProperties.Credentials credentials : memoryProperties.getUsers().values()) {
+            builder = builder
+                    .withUser(credentials.getUsername())
+                    .password(credentials.getPassword())
+                    .authorities(credentials.getAuthorities())
+                    .and();
+        }
     }
 
     @Override
@@ -101,7 +103,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         http
                 .authorizeRequests()
                 // what is open/close
-                .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class)).hasRole("ACTUATOR_ADMIN")
+                .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class)).hasAuthority("ACTUATOR_ADMIN")
                 .requestMatchers(EndpointRequest.to(InfoEndpoint.class, HealthEndpoint.class)).permitAll()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 // rest is close
@@ -109,8 +111,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 //
                 .and().cors()
                 .and().csrf()
-                // forms
+                // Sign In
                 .and().formLogin()
+                // Sign Out
                 .and().logout()
                 // handle "remember me"
                 .and().rememberMe();

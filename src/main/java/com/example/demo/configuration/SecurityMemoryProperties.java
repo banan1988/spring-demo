@@ -1,12 +1,22 @@
 package com.example.demo.configuration;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.Data;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 
-@Setter
-@Getter
+import java.util.HashMap;
+import java.util.Map;
+
+@Data
 @ConfigurationProperties(prefix = "security.memory")
-public class SecurityMemoryProperties {
+class SecurityMemoryProperties {
+
+    private Map<String, Credentials> users = new HashMap<>();
+
+    @Data
+    static class Credentials {
+        private String username;
+        private String password;
+        private String[] authorities;
+    }
 
 }
