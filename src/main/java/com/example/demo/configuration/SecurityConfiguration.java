@@ -20,6 +20,8 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 import java.util.Set;
 
+import static com.example.demo.controller.LoginController.LOGIN_ENDPOINT;
+
 @Configuration
 @EnableConfigurationProperties({SecurityLdapProperties.class, SecurityMemoryProperties.class})
 @EnableWebSecurity
@@ -72,8 +74,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     }
 
     private void ldapAuthentication(final AuthenticationManagerBuilder auth) throws Exception {
+//        final LdapAuthoritiesPopulator populator = new DefaultLdapAuthoritiesPopulator();
         auth
                 .ldapAuthentication()
+//                .ldapAuthoritiesPopulator(populator)
                 .userDnPatterns(ldapProperties.getUserDnPatterns())
                 .groupSearchBase(ldapProperties.getGroupSearchBase())
                 .contextSource()
@@ -113,8 +117,11 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .and().csrf()
                 // Sign In
                 .and().formLogin()
+                .loginPage(LOGIN_ENDPOINT)
+                .permitAll()
                 // Sign Out
                 .and().logout()
+                .permitAll()
                 // handle "remember me"
                 .and().rememberMe();
     }

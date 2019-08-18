@@ -1,14 +1,10 @@
 package com.example.demo.configuration;
 
 import nz.net.ultraq.thymeleaf.LayoutDialect;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
-import org.thymeleaf.spring5.SpringTemplateEngine;
-import org.thymeleaf.spring5.templateresolver.SpringResourceTemplateResolver;
-import org.thymeleaf.templateresolver.UrlTemplateResolver;
 
 @Configuration
 public class ThymeleafConfiguration {
