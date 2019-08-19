@@ -3,3 +3,5 @@ databaseChangeLog:
       file: db/changelog/changes/v000-schema.sql
   - include:
       file: db/changelog/changes/v001-accounts.yaml
+  - include:
+      file: db/changelog/changes/v002-remember-me.yaml

@@ -3,11 +3,14 @@
 <head>
     <meta charset="utf-8">
     <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE" th:text="${appName}">appName</title>
-    <link href="/favicon.png" rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.png}"/>
-    <link href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
-    <link href="/webjars/bootstrap4-glyphicons/css/bootstrap-glyphicons.min.css" rel="stylesheet" media="screen"
-          th:href="@{/webjars/bootstrap4-glyphicons/css/bootstrap-glyphicons.min.css}"/>
-    <link href="/css/sticky-footer-navbar.css" rel="stylesheet" media="screen" th:href="@{/css/sticky-footer-navbar.css}"/>
+    <link href="/images/favicon.png" rel="shortcut icon" type="image/x-icon"
+          th:href="@{/images/favicon.png}"/>
+    <link href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen"
+          th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link href="/bootstrap4-glyphicons/css/bootstrap-glyphicons.min.css" rel="stylesheet" media="screen"
+          th:href="@{/bootstrap4-glyphicons/css/bootstrap-glyphicons.min.css}"/>
+    <link href="/css/sticky-footer-navbar.css" rel="stylesheet" media="screen"
+          th:href="@{/css/sticky-footer-navbar.css}"/>
 </head>
 <body>
 <div th:replace="fragments/header :: header">

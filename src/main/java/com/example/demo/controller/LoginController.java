@@ -34,7 +34,8 @@ public class LoginController extends AbstractBaseController {
                 final String errorMsg = ex != null ? ex.getMessage() : "Invalid credentials";
                 model.addAttribute("errorMsg", errorMsg);
             }
-        } else if (logout != null) {
+        }
+        if (logout != null) {
             model.addAttribute("successMsg", "You have been signed out");
         }
         return "security/login";

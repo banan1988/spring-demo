@@ -4,9 +4,12 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title th:text="${appName + ' - Sign in'}">appName - Sign in</title>
-    <link href="/favicon.png" rel="shortcut icon" type="image/x-icon" th:href="@{/favicon.png}"/>
-    <link href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen" th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
-    <link href="/css/floating-labels.css" rel="stylesheet" media="screen" th:href="@{/css/floating-labels.css}"/>
+    <link href="/images/favicon.png" rel="shortcut icon" type="image/x-icon"
+          th:href="@{/images/favicon.png}"/>
+    <link href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen"
+          th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link href="/css/floating-labels.css" rel="stylesheet" media="screen"
+          th:href="@{/css/floating-labels.css}"/>
 </head>
 <body>
 <form class="form-signin" action="#" method="post" th:action="@{/login}">
@@ -15,7 +18,8 @@
     </div>
 
     <div class="text-center mb-4">
-        <h2 class="h3 mb-3 font-weight-normal">Please sign in</h2>
+        <h4 class="h4 mb-3 font-weight-normal" th:text="${'Welcome to ' + appName}">Welcome to appName</h4>
+        <h6 class="h6 mb-3 font-weight-normal">Please sign in</h6>
         <div class="alert alert-success" role="alert" th:if="${successMsg}" th:text="${successMsg}">Success</div>
         <div class="alert alert-danger" role="alert" th:if="${errorMsg}" th:text="${errorMsg}">Error</div>
     </div>
@@ -32,7 +36,7 @@
 
     <div class="checkbox mb-3">
         <label>
-            <input type="checkbox" value="remember-me"> Remember me
+            <input type="checkbox" name="remember-me"> Remember me
         </label>
     </div>
     <button class="btn btn-lg btn-primary btn-block" type="submit">Sign in</button>

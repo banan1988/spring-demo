@@ -1,0 +1,32 @@
+databaseChangeLog:
+  - changeSet:
+      id: 2
+      author: banan
+      comment: "PersistentTokenBasedRememberMeServices"
+      changes:
+        - createTable:
+            tableName: persistent_logins
+            columns:
+              - column:
+                  name: username
+                  type: varchar(64)
+                  constraints:
+                    unique: true
+                    nullable: false
+              - column:
+                  name: series
+                  type: varchar(64)
+                  constraints:
+                    primaryKey: true
+                    nullable: false
+              - column:
+                  name: token
+                  type: varchar(64)
+                  constraints:
+                    nullable: false
+              - column:
+                  name: last_used
+                  type: timestamp
+                  constraints:
+                    nullable: false
+                  defaultValue: CURRENT_TIMESTAMP

@@ -31,6 +31,10 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final String MEMORY = "memory";
     private static final Set<String> ALLOWED_METHODS = ImmutableSet.of(LDAP, MEMORY);
 
+    private static final int REMEMBER_ME_TOKEN_VALIDITY_SECONDS = 3600 * 24; // 1 day
+    private static final String REMEMBER_ME_KEY = "X-?6?$Y8KSkXVr8teTshwTYvz-*4DTFk";
+    private static final String REMEMBER_ME_COOKIE_NAME = "remember-me";
+
     private final String method;
     private final SecurityLdapProperties ldapProperties;
     private final SecurityMemoryProperties memoryProperties;
@@ -44,19 +48,6 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
         this.ldapProperties = ldapProperties;
         this.memoryProperties = memoryProperties;
     }
-
-//    @Autowired
-//    private AccountService accountService;
-//
-//    @Bean
-//    public TokenBasedRememberMeServices rememberMeServices() {
-//        return new TokenBasedRememberMeServices("remember-me-key", accountService);
-//    }
-//
-//    @Bean
-//    public PasswordEncoder passwordEncoder() {
-//        return new BCryptPasswordEncoder();
-//    }
 
     @Override
     protected void configure(final AuthenticationManagerBuilder auth) throws Exception {
@@ -110,6 +101,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class)).hasAuthority("ACTUATOR_ADMIN")
                 .requestMatchers(EndpointRequest.to(InfoEndpoint.class, HealthEndpoint.class)).permitAll()
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
+                .antMatchers("/bootstrap4-glyphicons/**").permitAll()
                 // rest is close
                 .anyRequest().fullyAuthenticated()
                 //
@@ -121,9 +113,13 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .permitAll()
                 // Sign Out
                 .and().logout()
+                .deleteCookies(REMEMBER_ME_COOKIE_NAME)
                 .permitAll()
                 // handle "remember me"
-                .and().rememberMe();
+                .and().rememberMe()
+                .rememberMeCookieName(REMEMBER_ME_COOKIE_NAME)
+                .key(REMEMBER_ME_KEY)
+                .tokenValiditySeconds(REMEMBER_ME_TOKEN_VALIDITY_SECONDS);
     }
 
 }
