@@ -1,5 +1,6 @@
 package com.example.demo.controller;
 
+import com.example.demo.AbstractBaseController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
@@ -7,7 +8,7 @@ import org.springframework.web.bind.annotation.GetMapping;
 public class HomeController extends AbstractBaseController {
 
     @Override
-    String module() {
+    protected String module() {
         return "home";
     }
 

@@ -1,4 +1,4 @@
-package com.example.demo.configuration;
+package com.example.demo.security;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
@@ -20,7 +20,7 @@ import org.springframework.security.crypto.password.NoOpPasswordEncoder;
 
 import java.util.Set;
 
-import static com.example.demo.controller.LoginController.LOGIN_ENDPOINT;
+import static com.example.demo.security.LoginController.LOGIN_ENDPOINT;
 
 @Configuration
 @EnableConfigurationProperties({SecurityLdapProperties.class, SecurityMemoryProperties.class})

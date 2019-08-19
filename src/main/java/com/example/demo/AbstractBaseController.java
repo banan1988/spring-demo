@@ -1,4 +1,4 @@
-package com.example.demo.controller;
+package com.example.demo;
 
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -9,11 +9,11 @@ public abstract class AbstractBaseController {
     private String appName;
 
     @ModelAttribute("appName")
-    String appName() {
+    protected String appName() {
         return this.appName;
     }
 
     @ModelAttribute("module")
-    abstract String module();
+    protected abstract String module();
 
 }

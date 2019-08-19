@@ -1,5 +1,6 @@
-package com.example.demo.controller;
+package com.example.demo.security;
 
+import com.example.demo.AbstractBaseController;
 import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.web.WebAttributes;
 import org.springframework.stereotype.Controller;
@@ -13,11 +14,11 @@ import javax.servlet.http.HttpSession;
 @Controller
 public class LoginController extends AbstractBaseController {
 
-    public static final String LOGIN_ENDPOINT = "/login";
+    static final String LOGIN_ENDPOINT = "/login";
 
     @Override
-    String module() {
-        return "login";
+    protected String module() {
+        return null;
     }
 
     /**
