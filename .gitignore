@@ -33,3 +33,5 @@ out/
 
 /src/main/resources/static/images/
 favicon.*
+*.mv.db
+*.trace.db

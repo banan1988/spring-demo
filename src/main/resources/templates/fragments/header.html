@@ -15,6 +15,9 @@
                 <li class="nav-item" th:classappend="${module == 'tasks' ? 'active' : ''}">
                     <a class="nav-link" href="#" th:href="@{/task}">Tasks</a>
                 </li>
+                <li class="nav-item" th:classappend="${module == 'h2-console' ? 'active' : ''}">
+                    <a class="nav-link" href="#" target="_blank" th:href="@{/h2-console}" th:target="_blank">h2-console</a>
+                </li>
             </ul>
             <form class="form-inline" action="#" method="post" th:action="@{/search}">
                 <div class="input-group">

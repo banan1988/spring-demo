@@ -2,6 +2,7 @@ package com.example.demo.security;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.context.ShutdownEndpoint;
@@ -9,7 +10,7 @@ import org.springframework.boot.actuate.health.HealthEndpoint;
 import org.springframework.boot.actuate.info.InfoEndpoint;
 import org.springframework.boot.autoconfigure.security.servlet.PathRequest;
 import org.springframework.boot.context.properties.EnableConfigurationProperties;
-import org.springframework.context.annotation.Configuration;
+import org.springframework.context.annotation.Bean;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.authentication.configurers.provisioning.InMemoryUserDetailsManagerConfigurer;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -17,23 +18,29 @@ import org.springframework.security.config.annotation.web.configuration.EnableWe
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.crypto.password.LdapShaPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.web.authentication.rememberme.JdbcTokenRepositoryImpl;
+import org.springframework.security.web.authentication.rememberme.PersistentTokenRepository;
 
+import javax.sql.DataSource;
 import java.util.Set;
+import java.util.concurrent.TimeUnit;
 
 import static com.example.demo.security.LoginController.LOGIN_ENDPOINT;
 
-@Configuration
-@EnableConfigurationProperties({SecurityLdapProperties.class, SecurityMemoryProperties.class})
 @EnableWebSecurity
+@EnableConfigurationProperties({SecurityLdapProperties.class, SecurityMemoryProperties.class})
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final String LDAP = "ldap";
     private static final String MEMORY = "memory";
     private static final Set<String> ALLOWED_METHODS = ImmutableSet.of(LDAP, MEMORY);
 
-    private static final int REMEMBER_ME_TOKEN_VALIDITY_SECONDS = 3600 * 24; // 1 day
+    private static final int REMEMBER_ME_TOKEN_VALIDITY_SECONDS = (int) TimeUnit.DAYS.toSeconds(1);
     private static final String REMEMBER_ME_KEY = "X-?6?$Y8KSkXVr8teTshwTYvz-*4DTFk";
     private static final String REMEMBER_ME_COOKIE_NAME = "remember-me";
+
+    @Autowired
+    private DataSource dataSource;
 
     private final String method;
     private final SecurityLdapProperties ldapProperties;
@@ -95,31 +102,44 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        http
-                .authorizeRequests()
-                // what is open/close
-                .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class)).hasAuthority("ACTUATOR_ADMIN")
-                .requestMatchers(EndpointRequest.to(InfoEndpoint.class, HealthEndpoint.class)).permitAll()
+        http.authorizeRequests()
+                // open
                 .requestMatchers(PathRequest.toStaticResources().atCommonLocations()).permitAll()
                 .antMatchers("/bootstrap4-glyphicons/**").permitAll()
+                // endpoints
+                .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class)).hasAuthority("ACTUATOR_ADMIN")
+                .requestMatchers(EndpointRequest.to(InfoEndpoint.class, HealthEndpoint.class)).permitAll()
                 // rest is close
-                .anyRequest().fullyAuthenticated()
-                //
-                .and().cors()
-                .and().csrf()
-                // Sign In
-                .and().formLogin()
+                .anyRequest().fullyAuthenticated();
+
+        //
+        http.cors();
+        http.csrf();
+
+        // Sign In
+        http.formLogin()
                 .loginPage(LOGIN_ENDPOINT)
-                .permitAll()
-                // Sign Out
-                .and().logout()
-                .deleteCookies(REMEMBER_ME_COOKIE_NAME)
-                .permitAll()
-                // handle "remember me"
-                .and().rememberMe()
+                .permitAll();
+
+        // Sign Out
+        http.logout()
+                .permitAll();
+
+        // handle "remember me"
+        http.rememberMe()
+                .tokenRepository(persistentTokenRepository())
                 .rememberMeCookieName(REMEMBER_ME_COOKIE_NAME)
                 .key(REMEMBER_ME_KEY)
                 .tokenValiditySeconds(REMEMBER_ME_TOKEN_VALIDITY_SECONDS);
+    }
+
+    @Bean
+    PersistentTokenRepository persistentTokenRepository() {
+        final JdbcTokenRepositoryImpl tokenRepository = new JdbcTokenRepositoryImpl();
+        tokenRepository.setDataSource(dataSource);
+        // we've provided creation of persistent_logins table via liquibase
+        tokenRepository.setCreateTableOnStartup(false);
+        return tokenRepository;
     }
 
 }
