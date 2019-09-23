@@ -18,13 +18,13 @@ public class H2SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(final HttpSecurity http) throws Exception {
-        final String antPattern = antPattern(properties.getPath());
+        final String whitelistH2Pattern = antPattern(properties.getPath());
 
         // we need config just for console, nothing else
-        http.antMatcher(antPattern)
+        http.antMatcher(whitelistH2Pattern)
                 .authorizeRequests().anyRequest().permitAll()
                 // this will ignore only h2-console csrf
-                .and().csrf().ignoringAntMatchers(antPattern)
+                .and().csrf().ignoringAntMatchers(whitelistH2Pattern)
                 // this will allow frames with same origin which is much more safe
                 .and().headers().frameOptions().sameOrigin();
     }

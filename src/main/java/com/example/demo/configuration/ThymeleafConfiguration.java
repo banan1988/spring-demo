@@ -9,20 +9,6 @@ import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 @Configuration
 public class ThymeleafConfiguration {
 
-//    @Autowired
-//    private SpringResourceTemplateResolver defaultTemplateResolver;
-//
-//    @Bean
-//    public SpringTemplateEngine templateEngine() {
-//        final SpringTemplateEngine templateEngine = new SpringTemplateEngine();
-//        templateEngine.addTemplateResolver(new UrlTemplateResolver());
-//        templateEngine.addTemplateResolver(defaultTemplateResolver);
-//        templateEngine.addDialect(new SpringSecurityDialect());
-//        templateEngine.addDialect(new LayoutDialect());
-//        templateEngine.addDialect(new Java8TimeDialect());
-//        return templateEngine;
-//    }
-
     @Bean
     public SpringSecurityDialect springSecurityDialect() {
         return new SpringSecurityDialect();

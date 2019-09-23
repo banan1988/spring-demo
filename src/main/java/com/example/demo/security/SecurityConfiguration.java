@@ -35,9 +35,9 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final String MEMORY = "memory";
     private static final Set<String> ALLOWED_METHODS = ImmutableSet.of(LDAP, MEMORY);
 
-    private static final int REMEMBER_ME_TOKEN_VALIDITY_SECONDS = (int) TimeUnit.DAYS.toSeconds(1);
-    private static final String REMEMBER_ME_KEY = "X-?6?$Y8KSkXVr8teTshwTYvz-*4DTFk";
     private static final String REMEMBER_ME_COOKIE_NAME = "remember-me";
+    private static final String REMEMBER_ME_KEY = "X-?6?$Y8KSkXVr8teTshwTYvz-*4DTFk";
+    private static final int REMEMBER_ME_TOKEN_VALIDITY_SECONDS = (int) TimeUnit.DAYS.toSeconds(1);
 
     @Autowired
     private DataSource dataSource;
@@ -110,7 +110,7 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
                 .requestMatchers(EndpointRequest.to(ShutdownEndpoint.class)).hasAuthority("ACTUATOR_ADMIN")
                 .requestMatchers(EndpointRequest.to(InfoEndpoint.class, HealthEndpoint.class)).permitAll()
                 // rest is close
-                .anyRequest().fullyAuthenticated();
+                .anyRequest().authenticated();
 
         //
         http.cors();
