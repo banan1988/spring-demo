@@ -1,11 +1,17 @@
 <!DOCTYPE html>
 <html xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity5">
 <head>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen"
+          th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
+    <link href="../../static/bootstrap4-glyphicons/css/bootstrap-glyphicons.min.css" rel="stylesheet" media="screen"
+          th:href="@{/bootstrap4-glyphicons/css/bootstrap-glyphicons.min.css}"/>
+    <link href="../../static/css/sticky-footer-navbar.css" rel="stylesheet" media="screen"
+          th:href="@{/css/sticky-footer-navbar.css}"/>
 </head>
 <body>
 <header>
     <nav class="navbar navbar-expand-md navbar-dark fixed-top bg-dark" th:fragment="header">
-        <img class="img-fluid float-left mr-1" th:src="@{/images/logo-72x72.png}" width="36" height="36" alt="logo"/>
+        <img class="img-fluid float-left mr-1" src="../../static/images/logo-72x72.png" th:src="@{/images/logo-72x72.png}" width="36" height="36" alt="logo"/>
         <a class="navbar-brand" href="#" th:text="${appName}">appName</a>
         <div class="collapse navbar-collapse" id="navbarCollapse">
             <ul class="navbar-nav mr-auto">
@@ -20,6 +26,9 @@
                 </li>
                 <li class="nav-item" th:classappend="${module == 'swagger-ui' ? 'active' : ''}">
                     <a class="nav-link" href="#" target="_blank" th:href="@{/swagger-ui.html}" th:target="_blank">swagger-ui</a>
+                </li>
+                <li class="nav-item" th:classappend="${module == 'actuator' ? 'active' : ''}">
+                    <a class="nav-link" href="#" target="_blank" th:href="@{/actuator}" th:target="_blank">actuator</a>
                 </li>
             </ul>
             <form class="form-inline" action="#" method="post" th:action="@{/search}">

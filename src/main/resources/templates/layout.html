@@ -2,14 +2,17 @@
 <html xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout" xmlns:th="https://www.thymeleaf.org">
 <head>
     <meta charset="utf-8">
+
     <title layout:title-pattern="$LAYOUT_TITLE - $CONTENT_TITLE" th:text="${appName}">appName</title>
-    <link href="/images/favicon.png" rel="shortcut icon" type="image/x-icon"
+
+    <link href="../static/images/favicon.png" rel="shortcut icon" type="image/x-icon"
           th:href="@{/images/favicon.png}"/>
-    <link href="/webjars/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen"
+
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" rel="stylesheet" media="screen"
           th:href="@{/webjars/bootstrap/4.3.1/css/bootstrap.min.css}"/>
-    <link href="/bootstrap4-glyphicons/css/bootstrap-glyphicons.min.css" rel="stylesheet" media="screen"
+    <link href="../static/bootstrap4-glyphicons/css/bootstrap-glyphicons.min.css" rel="stylesheet" media="screen"
           th:href="@{/bootstrap4-glyphicons/css/bootstrap-glyphicons.min.css}"/>
-    <link href="/css/sticky-footer-navbar.css" rel="stylesheet" media="screen"
+    <link href="../static/css/sticky-footer-navbar.css" rel="stylesheet" media="screen"
           th:href="@{/css/sticky-footer-navbar.css}"/>
 </head>
 <body>
@@ -25,7 +28,14 @@
     footer
 </div>
 </body>
+
 <!-- Below order is required ! -->
-<script src="/webjars/jquery/3.4.1/jquery.min.js" th:href="@{/webjars/jquery/3.4.1/jquery.min.js}"></script>
-<script src="/webjars/bootstrap/4.3.1/js/bootstrap.bundle.min.js" th:href="@{/webjars/bootstrap/4.3.1/js/bootstrap.bundle.min.js}"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.4.1/jquery.min.js"
+        th:src="|@{/webjars/jquery/3.4.1/jquery.min.js}|"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.bundle.min.js"
+        th:src="|@{/webjars/bootstrap/4.3.1/js/bootstrap.bundle.min.js}|"></script>
+
+<th:block layout:fragment="javascript">
+    Additional JavaScript
+</th:block>
 </html>
