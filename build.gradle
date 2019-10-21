@@ -2,6 +2,8 @@ plugins {
     // springfox-swagger2:2.9.2 is not compatible with version 2.2.0.RELEASE so we cannot upgrade it :(
     id 'org.springframework.boot' version '2.1.9.RELEASE'
     id 'java'
+
+    // code coverage
     id 'jacoco'
 
     // Generate Git Information
@@ -95,12 +97,34 @@ dependencies {
 
 test {
     useJUnitPlatform()
+
+    jacoco {
+        enabled = true
+    }
+}
+
+jacoco {
+    toolVersion = "0.8.4"
+    reportsDir = file("$buildDir/reports/jacoco")
 }
 
 jacocoTestReport {
     reports {
-        xml.setEnabled(true)
-        html.setEnabled(true)
+        xml.enabled false
+        csv.enabled false
+
+        html.enabled true
+        html.destination file("${buildDir}/jacocoHtml")
+    }
+}
+
+jacocoTestCoverageVerification {
+    violationRules {
+        rule {
+            limit {
+                minimum = 0.5
+            }
+        }
     }
 }
 
