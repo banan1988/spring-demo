@@ -2,6 +2,7 @@ plugins {
     // springfox-swagger2:2.9.2 is not compatible with version 2.2.0.RELEASE so we cannot upgrade it :(
     id 'org.springframework.boot' version '2.1.9.RELEASE'
     id 'java'
+    id 'idea'
 
     // code coverage
     id 'jacoco'
@@ -14,6 +15,7 @@ plugins {
 }
 
 apply plugin: 'java'
+apply plugin: 'idea'
 apply plugin: 'org.springframework.boot'
 apply plugin: 'io.spring.dependency-management'
 apply plugin: 'jacoco'
@@ -39,6 +41,14 @@ configurations.all {
 
 repositories {
     mavenCentral()
+}
+
+idea {
+    module {
+        sourceDirs += file('jenkinsfile')
+        downloadJavadoc = true
+        downloadSources = true
+    }
 }
 
 dependencies {

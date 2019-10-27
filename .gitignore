@@ -35,3 +35,4 @@ out/
 favicon.*
 *.mv.db
 *.trace.db
+/jenkinsfile/ssh/

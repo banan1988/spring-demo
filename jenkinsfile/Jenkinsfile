@@ -1,0 +1,37 @@
+#!/usr/bin/env groovy
+
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+    }
+
+    options {
+        timeout(time: 1, unit: 'MINUTES')
+    }
+
+    stages {
+        stage('Stage 1') {
+            steps {
+                script {
+                    echo 'Stage 1'
+                    echo "Hello ${params.PERSON}"
+                }
+            }
+        }
+        stage('Stage 2') {
+            steps {
+                script {
+                    echo 'Stage 2'
+                }
+            }
+        }
+    }
+
+    post {
+        always {
+            echo 'I will always say Hello again!'
+        }
+    }
+}
