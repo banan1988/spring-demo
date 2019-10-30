@@ -15,7 +15,8 @@ services:
       # for unix instead of DOCKER_HOST
       # - /var/run/docker.sock:/var/run/docker.sock
     environment:
-      - JENKINS_PASSWORD=jenkins
+      # Start jenkins unlocked - skip wizard with users creation
+      - JAVA_OPTS: "-Djenkins.install.runSetupWizard=false"
       # for windows you have to enable "Expose daemon on tcp://localhost:2375 without TLS" in Docker settings
       - DOCKER_HOST=tcp://host.docker.internal:2375
     networks:
