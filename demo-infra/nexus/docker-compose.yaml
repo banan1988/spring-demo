@@ -1,0 +1,28 @@
+version: "3"
+services:
+  nexus:
+    image: "sonatype/nexus:oss"
+    container_name: "nexus"
+    restart: unless-stopped
+    ports:
+      # local port:docker port
+      - "8081:8081"
+    volumes:
+      # local volume:docker volume
+      - nexus_data:/sonatype-work
+    environment:
+      - CONTEXT_PATH=/nexus
+      - MIN_HEAP=256m
+      - MAX_HEAP=768m
+      - JAVA_OPTS=-server -XX:MaxPermSize=192m -Djava.net.preferIPv4Stack=true
+    networks:
+      - default
+
+networks:
+  default:
+    external:
+      # name of network created first by create-network.sh script
+      name: demo
+
+volumes:
+  nexus_data:

@@ -3,6 +3,7 @@ services:
   postgres:
     image: "postgres:11"
     container_name: "pg11"
+    restart: unless-stopped
     ports:
       # local port:docker port
       - "5432:5432"

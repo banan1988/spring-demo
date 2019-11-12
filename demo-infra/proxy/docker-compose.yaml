@@ -1,0 +1,29 @@
+version: "3"
+services:
+  proxy:
+    image: "nginx:stable"
+    container_name: "proxy"
+    restart: always
+    ports:
+      # local port:docker port
+      - "80:80"
+      - "443:443"
+    volumes:
+      # local volume:docker volume
+      - ./conf.d/jenkins.conf:/etc/nginx/conf.d/jenkins.conf
+      - ./conf.d/nexus.conf:/etc/nginx/conf.d/nexus.conf
+      - ./conf.d/sonarqube.conf:/etc/nginx/conf.d/sonarqube.conf
+    environment: []
+    networks:
+      - default
+      - frontend
+
+networks:
+  default:
+    external:
+      # name of network created first by create-network.sh script
+      name: demo
+  frontend:
+    driver: bridge
+    driver_opts:
+      com.docker.network.enable_ipv6: "false"
