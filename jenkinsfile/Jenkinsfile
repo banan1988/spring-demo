@@ -1,29 +1,84 @@
 #!/usr/bin/env groovy
 
-pipeline {
-    agent any
+def _GLOBAL_TIMEOUT_MINUTES_ = 60
+def _SCM_TIMEOUT_MINUTES_ = 5
+def _SONAR_TIMEOUT_MINUTES_ = 5
+def _JDK_ = 'openjdk-12'
 
-    parameters {
-        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+pipeline {
+//    agent any
+    agent {
+        // run on node with 'master' label
+        label 'master'
+        // run on node with any label except 'master'
+        // label '!master'
     }
 
+    tools {
+        jdk _JDK_
+    }
+
+    environment {
+        DUMMY_ENV = ""
+    }
+
+//    parameters {
+//        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
+//    }
+
     options {
-        timeout(time: 1, unit: 'MINUTES')
+        timeout(time: _GLOBAL_TIMEOUT_MINUTES_, unit: 'MINUTES')
+        buildDiscarder(logRotator(numToKeepStr: '2'))
+        ansiColor('xterm')
+        timestamps()
+        parallelsAlwaysFailFast()
     }
 
     stages {
-        stage('Stage 1') {
+        stage('Preparing') {
             steps {
+//                echo "Hello ${params.PERSON}"
+                cleanWs()
                 script {
-                    echo 'Stage 1'
-                    echo "Hello ${params.PERSON}"
+                    sh 'printenv'
                 }
             }
         }
-        stage('Stage 2') {
+
+        stage('Checkout repository') {
+            steps {
+                timeout(time: _SCM_TIMEOUT_MINUTES_, unit: 'MINUTES') {
+                    checkout scm
+                }
+            }
+        }
+
+        stage('Build & test') {
             steps {
                 script {
-                    echo 'Stage 2'
+                    // ./gradlew: Permission denied
+                    // FIX: git update-index --chmod=+x gradlew
+                    sh './gradlew build --profile'
+                }
+            }
+        }
+
+        stage('SonarQube analysis') {
+            steps {
+                timeout(time: _SONAR_TIMEOUT_MINUTES_, unit: 'MINUTES') {
+                    withSonarQubeEnv('demo') {
+                        script {
+                            sh './gradlew sonarqube -x test --profile'
+                        }
+                    }
+                }
+            }
+        }
+
+        stage("Quality Gate") {
+            steps {
+                timeout(time: 1, unit: 'HOURS') {
+                    waitForQualityGate abortPipeline: true
                 }
             }
         }
@@ -31,7 +86,35 @@ pipeline {
 
     post {
         always {
-            echo 'I will always say Hello again!'
+            echo "Archive JARs:"
+            archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
+
+            echo "Publish Gradle Test Report:"
+            publishHTML([
+                    allowMissing         : false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll              : true,
+                    reportDir            : 'build/reports/tests/test',
+                    reportFiles          : 'index.html',
+                    reportName           : 'Gradle Test Report',
+                    reportTitles         : ''
+            ])
+
+            echo "Publish Gradle Profile Reports:"
+            publishHTML([
+                    allowMissing         : false,
+                    alwaysLinkToLastBuild: false,
+                    keepAll              : true,
+                    reportDir            : 'build/reports/profile',
+                    reportFiles          : 'profile-*.html',
+                    reportName           : 'Gradle Profile Reports',
+                    reportTitles         : ''
+            ])
+
+            echo "Records test results from main project:"
+            junit 'build/test-results/**/*.xml'
+            echo "Records test results from subprojects:"
+            junit '**/build/test-results/**/*.xml'
         }
     }
 }

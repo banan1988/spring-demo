@@ -140,12 +140,17 @@ jacocoTestCoverageVerification {
 }
 project.tasks["jacocoTestCoverageVerification"].dependsOn "jacocoTestReport"
 
+def branchName = System.getenv('BRANCH_NAME') ? System.getenv('BRANCH_NAME') : System.getProperty('user.name')
+println("Branch name: ${branchName}")
 sonarqube {
     properties {
-        property "sonar.sourceEncoding", "UTF-8"
+        property "sonar.sourceEncoding", "${sonarSourceEncoding}"
         property "sonar.host.url", "${sonarHostUrl}"
         property "sonar.login", "${sonarLogin}"
-        property "sonar.jacoco.reportPaths", "${buildDir}/jacoco"
+        // Branch analysis is available in Developer Edition and above
+//        property "sonar.branch.name", "${branchName}"
+        property "sonar.jacoco.reportPaths", "${buildDir}/jacoco.exec"
+        property "sonar.junit.reportPaths", "${buildDir}/test-results/**/*.xml, **/${buildDir}/test-results/**/*.xml"
     }
 }
 project.tasks["sonarqube"].dependsOn "jacocoTestReport"
