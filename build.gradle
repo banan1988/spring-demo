@@ -105,8 +105,19 @@ dependencies {
     compile("com.unboundid:unboundid-ldapsdk")
 }
 
+def username = System.getenv('USERNAME') ? System.getenv('USERNAME') : System.getProperty('user.name')
+def branchName = System.getenv('BRANCH_NAME') ? System.getenv('BRANCH_NAME') : "${username}"
+println("Username: ${username}")
+println("Branch name: ${branchName}")
+
+def jacocoExecReportPath = "${buildDir}/jacoco/jacoco.exec"
 test {
     useJUnitPlatform()
+
+    jacoco {
+        // default: ${buildDir}/jacoco/test.exec
+        destinationFile = file("${jacocoExecReportPath}")
+    }
 }
 // after test task gradle always execute jacoco's tasks
 test.finalizedBy jacocoTestReport
@@ -116,12 +127,13 @@ jacoco {
     toolVersion = "${jacocoVersion}"
 }
 
+def jacocoXmlReportPath = "${buildDir}/jacoco/jacoco.xml"
 jacocoTestReport {
     reports {
         csv.enabled false
 
         xml.enabled true
-        xml.destination file("${buildDir}/jacoco/test.xml")
+        xml.destination file("${jacocoXmlReportPath}")
 
         html.enabled true
         html.destination file("${buildDir}/jacocoHtml")
@@ -140,8 +152,6 @@ jacocoTestCoverageVerification {
 }
 project.tasks["jacocoTestCoverageVerification"].dependsOn "jacocoTestReport"
 
-def branchName = System.getenv('BRANCH_NAME') ? System.getenv('BRANCH_NAME') : System.getProperty('user.name')
-println("Branch name: ${branchName}")
 sonarqube {
     properties {
         property "sonar.sourceEncoding", "${sonarSourceEncoding}"
@@ -149,8 +159,9 @@ sonarqube {
         property "sonar.login", "${sonarLogin}"
         // Branch analysis is available in Developer Edition and above
 //        property "sonar.branch.name", "${branchName}"
-        property "sonar.jacoco.reportPaths", "${buildDir}/jacoco.exec"
-        property "sonar.junit.reportPaths", "${buildDir}/test-results/**/*.xml, **/${buildDir}/test-results/**/*.xml"
+        property "sonar.jacoco.reportPaths", "${jacocoExecReportPath}"
+        property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoXmlReportPath}"
+        property "sonar.junit.reportPaths", "${buildDir}/test-results/test/"
     }
 }
 project.tasks["sonarqube"].dependsOn "jacocoTestReport"
