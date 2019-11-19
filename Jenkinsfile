@@ -81,6 +81,34 @@ pipeline {
                 }
             }
         }
+
+        stage("Release") {
+            when {
+                branch 'master'
+            }
+            steps {
+                script {
+                    // https://axion-release-plugin.readthedocs.io/en/latest/configuration/ci_servers/#jenkins
+                    // Because Jenkins will check out git repositories in a detached head state,
+                    // two flags should be set when running the release task:
+                    // -Prelease.disableChecks -Prelease.pushTagsOnly
+                    sh './gradlew release -Prelease.disableChecks -Prelease.pushTagsOnly -x test --profile'
+                    sh './gradlew currentVersion'
+                }
+            }
+        }
+
+        stage("Publish") {
+            when {
+                branch 'master'
+            }
+            steps {
+                script {
+                    sh './gradlew publish -x test --profile'
+                    sh './gradlew currentVersion'
+                }
+            }
+        }
     }
 
     post {

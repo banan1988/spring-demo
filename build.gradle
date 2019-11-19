@@ -1,8 +1,11 @@
 plugins {
-    // springfox-swagger2:2.9.2 is not compatible with version 2.2.0.RELEASE so we cannot upgrade it :(
-    id 'org.springframework.boot' version '2.1.9.RELEASE'
     id 'java'
     id 'idea'
+    id 'maven-publish'
+
+    // springfox-swagger2:2.9.2 is not compatible with version 2.2.0.RELEASE so we cannot upgrade it :(
+    id 'org.springframework.boot' version '2.1.9.RELEASE'
+    id 'io.spring.dependency-management' version '1.0.8.RELEASE'
 
     // code coverage
     id 'jacoco'
@@ -12,19 +15,18 @@ plugins {
     // Generate Git Information
     id "com.gorylenko.gradle-git-properties" version "2.2.0"
 
-    // Keep dependencies up to date
+    // Keep dependencies up to date - ./gradlew dependencyUpdates
     id "com.github.ben-manes.versions" version "0.27.0"
+
+    // Release & Publish
+    id 'pl.allegro.tech.build.axion-release' version '1.10.2'
 }
 
-apply plugin: 'java'
-apply plugin: 'idea'
-apply plugin: 'org.springframework.boot'
-apply plugin: 'io.spring.dependency-management'
-apply plugin: 'jacoco'
+project.group = artifactGroup
+project.version = scmVersion.version
 
-group = 'com.example'
-version = '0.0.1-SNAPSHOT'
 sourceCompatibility = JavaVersion.VERSION_12
+targetCompatibility = JavaVersion.VERSION_12
 
 configurations {
     developmentOnly
@@ -42,12 +44,36 @@ configurations.all {
 }
 
 repositories {
+    mavenLocal()
+
     mavenCentral()
+    jcenter()
+}
+
+java {
+    withJavadocJar()
+    withSourcesJar()
+}
+
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            from components.java
+        }
+    }
+    repositories {
+        maven {
+            // change URLs to point to your repos, e.g. http://my.org/repo
+            def releasesRepoUrl = "$buildDir/repos/releases"
+            def snapshotsRepoUrl = "$buildDir/repos/snapshots"
+            url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+        }
+    }
 }
 
 idea {
     module {
-        sourceDirs += file('jenkinsfile')
+        sourceDirs += file('src/main/jenkinsfile')
         downloadJavadoc = true
         downloadSources = true
     }
@@ -91,13 +117,13 @@ dependencies {
     testImplementation "org.junit.jupiter:junit-jupiter:${junit5Version}"
 
     // templates
-    compile 'nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.4.1'
-    compile 'org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE'
+    compile "nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:2.4.1"
+    compile "org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE"
 
     // CSS styles and JS scripts
-    compile 'org.webjars:bootstrap:4.3.1'
-    compile 'org.webjars:jquery:3.4.1'
-    compile 'org.webjars:angularjs:1.7.7'
+    compile "org.webjars:bootstrap:4.3.1"
+    compile "org.webjars:jquery:3.4.1"
+    compile "org.webjars:angularjs:1.7.7"
 
     // LDAP authentication
     compile("org.springframework.ldap:spring-ldap-core")
@@ -154,11 +180,12 @@ project.tasks["jacocoTestCoverageVerification"].dependsOn "jacocoTestReport"
 
 sonarqube {
     properties {
-        property "sonar.sourceEncoding", "${sonarSourceEncoding}"
         property "sonar.host.url", "${sonarHostUrl}"
         property "sonar.login", "${sonarLogin}"
+
         // Branch analysis is available in Developer Edition and above
 //        property "sonar.branch.name", "${branchName}"
+
         property "sonar.jacoco.reportPaths", "${jacocoExecReportPath}"
         property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoXmlReportPath}"
         property "sonar.junit.reportPaths", "${buildDir}/test-results/test/"
