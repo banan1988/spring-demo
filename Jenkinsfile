@@ -1,8 +1,8 @@
 #!/usr/bin/env groovy
 
 def _GLOBAL_TIMEOUT_MINUTES_ = 60
-def _SCM_TIMEOUT_MINUTES_ = 5
-def _SONAR_TIMEOUT_MINUTES_ = 5
+def _SCM_TIMEOUT_MINUTES_ = 10
+def _SONAR_TIMEOUT_MINUTES_ = 10
 def _JDK_ = 'openjdk-12'
 
 pipeline {
@@ -76,7 +76,7 @@ pipeline {
 
         stage("Quality Gate") {
             steps {
-                timeout(time: 1, unit: 'HOURS') {
+                timeout(time: _SONAR_TIMEOUT_MINUTES_, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
             }
