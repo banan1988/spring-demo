@@ -17,7 +17,7 @@ plugins {
     id "com.gorylenko.gradle-git-properties" version "2.2.0"
 
     // Keep dependencies up to date
-    // ./gradlew dependencyUpdates
+    // ./gradlew dependencyUpdates -Drevision=release
     id "com.github.ben-manes.versions" version "0.27.0"
 
     // Release & Publish
@@ -26,17 +26,25 @@ plugins {
     id "pl.allegro.tech.build.axion-release" version "1.10.2"
 }
 
-scmVersion {
-    tag {
-        prefix = 'spring-demo'
-    }
-}
-
 project.group = artifactGroup
-project.version = scmVersion.version
 
 sourceCompatibility = JavaVersion.VERSION_12
 targetCompatibility = JavaVersion.VERSION_12
+
+def isNonStable = { String version ->
+    def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
+    def regex = /^[0-9,.v-]+(-r)?$/
+    return !stableKeyword && !(version ==~ regex)
+}
+
+dependencyUpdates {
+    rejectVersionIf {
+        isNonStable(it.candidate.version)
+    }
+
+    revision = "release"
+    gradleReleaseChannel = "current"
+}
 
 configurations {
     developmentOnly
