@@ -1,5 +1,5 @@
 #!/bin/bash
 
-VERSION=${1:-5.6.3}
+VERSION=${1:-6.0.1}
 
 gradle wrapper --gradle-version "${VERSION}"

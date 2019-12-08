@@ -31,8 +31,9 @@ out/
 ### VS Code ###
 .vscode/
 
+### DEMO ###
 /src/main/resources/static/images/
 favicon.*
 *.mv.db
 *.trace.db
-/jenkinsfile/ssh/
+src/main/jenkinsfile/ssh
