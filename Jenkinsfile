@@ -22,10 +22,6 @@ pipeline {
         DUMMY_ENV = ""
     }
 
-//    parameters {
-//        string(name: 'PERSON', defaultValue: 'Mr Jenkins', description: 'Who should I say hello to?')
-//    }
-
     options {
         timeout(time: _GLOBAL_TIMEOUT_MINUTES_, unit: 'MINUTES')
         buildDiscarder(logRotator(numToKeepStr: '2'))
@@ -37,13 +33,20 @@ pipeline {
     stages {
         stage('Preparing') {
             steps {
-//                echo "Hello ${params.PERSON}"
+                script {
+                    env.FAILED_STAGE_NAME = env.STAGE_NAME
+                }
+
                 cleanWs()
             }
         }
 
         stage('Checkout repository') {
             steps {
+                script {
+                    env.FAILED_STAGE_NAME = env.STAGE_NAME
+                }
+
                 timeout(time: _SCM_TIMEOUT_MINUTES_, unit: 'MINUTES') {
                     checkout scm
                 }
@@ -52,6 +55,10 @@ pipeline {
 
         stage('Build & test') {
             steps {
+                script {
+                    env.FAILED_STAGE_NAME = env.STAGE_NAME
+                }
+
                 script {
                     // Error: ./gradlew: Permission denied
                     // FIX: git update-index --chmod=+x gradlew
@@ -63,6 +70,15 @@ pipeline {
 
         stage('SonarQube analysis') {
             steps {
+                script {
+                    env.FAILED_STAGE_NAME = env.STAGE_NAME
+                }
+
+                sshagent(['302022a7-0abc-47f9-b20c-51939d278171']) {
+                    // sonar needs to know where is master to calculate coverage of new code
+                    sh "git fetch origin +refs/heads/master:refs/remotes/origin/master"
+                }
+
                 timeout(time: _SONAR_TIMEOUT_MINUTES_, unit: 'MINUTES') {
                     withSonarQubeEnv('demo') {
                         script {
@@ -76,6 +92,10 @@ pipeline {
 
         stage("Quality Gate") {
             steps {
+                script {
+                    env.FAILED_STAGE_NAME = env.STAGE_NAME
+                }
+
                 timeout(time: _SONAR_TIMEOUT_MINUTES_, unit: 'MINUTES') {
                     waitForQualityGate abortPipeline: true
                 }
@@ -87,13 +107,21 @@ pipeline {
                 branch 'master'
             }
             steps {
+                script {
+                    env.FAILED_STAGE_NAME = env.STAGE_NAME
+                }
+
                 sshagent(['302022a7-0abc-47f9-b20c-51939d278171']) {
                     // https://axion-release-plugin.readthedocs.io/en/latest/configuration/ci_servers/#jenkins
                     // Because Jenkins will check out git repositories in a detached head state,
                     // two flags should be set when running the release task:
                     // -Prelease.disableChecks -Prelease.pushTagsOnly
                     sh './gradlew release -Prelease.disableChecks -Prelease.pushTagsOnly -x test --profile'
-                    sh './gradlew currentVersion'
+                }
+
+                script {
+                    env.CURRENT_VERSION = sh(script: './gradlew currentVersion -q -Prelease.quiet', returnStdout: true).trim()
+                    slackNotification('SUCCESS', "Released version - ${env.CURRENT_VERSION}")
                 }
             }
         }
@@ -104,14 +132,32 @@ pipeline {
             }
             steps {
                 script {
+                    env.FAILED_STAGE_NAME = env.STAGE_NAME
+                }
+
+                script {
                     sh './gradlew publish -x test --profile'
                     sh './gradlew currentVersion'
+
+                    slackNotification('SUCCESS', "Published version - ${env.CURRENT_VERSION}")
                 }
             }
         }
     }
 
     post {
+        success {
+            slackNotification('SUCCESS', "Successful !")
+        }
+        unstable {
+            slackNotification('WARN', "Unstable on stage *${env.FAILED_STAGE_NAME}* !")
+        }
+        failure {
+            slackNotification('ERROR', "Failed on stage *${env.FAILED_STAGE_NAME}* !")
+        }
+        aborted {
+            slackNotification('ERROR', "Aborted on stage *${env.FAILED_STAGE_NAME}* !")
+        }
         always {
             echo "Archive JARs:"
             archiveArtifacts artifacts: 'build/libs/**/*.jar', fingerprint: true
@@ -144,4 +190,18 @@ pipeline {
             junit '**/build/test-results/**/*.xml'
         }
     }
+}
+
+def slackNotification(String level, String msg) {
+    def color = '#439fe0'
+    def message = "Build <${env.BUILD_URL}|${env.JOB_NAME}#${env.BUILD_NUMBER}>/<${env.RUN_DISPLAY_URL}|BlueOcean>: ${msg}" as Object
+    if (level == 'SUCCESS') {
+        color = '#27a21b'
+    } else if (level == 'WARN') {
+        color = '#ff4500'
+    } else if (level == 'ERROR') {
+        color = '#ce2231'
+    }
+
+    slackSend channel: 'jenkins', color: color, message: message, teamDomain: 'banan1988', tokenCredentialId: '11ca9396-177f-417d-bc3c-9d65f7369f0a'
 }
