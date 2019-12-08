@@ -87,7 +87,7 @@ pipeline {
                 branch 'master'
             }
             steps {
-                script {
+                sshagent(['302022a7-0abc-47f9-b20c-51939d278171']) {
                     // https://axion-release-plugin.readthedocs.io/en/latest/configuration/ci_servers/#jenkins
                     // Because Jenkins will check out git repositories in a detached head state,
                     // two flags should be set when running the release task:
