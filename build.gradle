@@ -152,8 +152,8 @@ dependencies {
 
 def username = System.getenv("USERNAME") ? System.getenv("USERNAME") : System.getProperty("user.name")
 def branchName = System.getenv("BRANCH_NAME") ? System.getenv("BRANCH_NAME") : "${username}"
-println("Username: ${username}")
-println("Branch name: ${branchName}")
+logger.warn("Username: ${username}")
+logger.warn("Branch name: ${branchName}")
 
 def jacocoExecReportPath = "${buildDir}/jacoco/jacoco.exec"
 test {
