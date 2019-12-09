@@ -7,7 +7,7 @@ import org.thymeleaf.extras.java8time.dialect.Java8TimeDialect;
 import org.thymeleaf.extras.springsecurity5.dialect.SpringSecurityDialect;
 
 @Configuration
-public class ThymeleafConfiguration {
+class ThymeleafConfiguration {
 
     @Bean
     public SpringSecurityDialect springSecurityDialect() {

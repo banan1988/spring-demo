@@ -11,7 +11,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 @Configuration
 @Order(1)
 @ConditionalOnProperty(prefix = "spring.h2.console", name = "enabled", havingValue = "true", matchIfMissing = false)
-public class H2SecurityConfiguration extends WebSecurityConfigurerAdapter {
+class H2SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private H2ConsoleProperties properties;

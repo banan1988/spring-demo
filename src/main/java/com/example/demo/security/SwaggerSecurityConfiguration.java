@@ -7,7 +7,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 
 @Configuration
 @Order(2)
-public class SwaggerSecurityConfiguration extends WebSecurityConfigurerAdapter {
+class SwaggerSecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final String WHITELIST_SWAGGER_RESOURCES_PATTERN = "/swagger-resources/**";
     private static final String WHITELIST_SWAGGER_UI_PATTERN = "/swagger-ui.html";

@@ -2,7 +2,6 @@ package com.example.demo.security;
 
 import com.google.common.base.Preconditions;
 import com.google.common.collect.ImmutableSet;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.actuate.autoconfigure.security.servlet.EndpointRequest;
 import org.springframework.boot.actuate.context.ShutdownEndpoint;
@@ -29,7 +28,7 @@ import static com.example.demo.security.LoginController.LOGIN_ENDPOINT;
 
 @EnableWebSecurity
 @EnableConfigurationProperties({SecurityLdapProperties.class, SecurityMemoryProperties.class, SecurityJdbcProperties.class})
-public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+class SecurityConfiguration extends WebSecurityConfigurerAdapter {
 
     private static final String LDAP = "ldap";
     private static final String MEMORY = "memory";
@@ -40,24 +39,26 @@ public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
     private static final String REMEMBER_ME_KEY = "X-?6?$Y8KSkXVr8teTshwTYvz-*4DTFk";
     private static final int REMEMBER_ME_TOKEN_VALIDITY_SECONDS = (int) TimeUnit.DAYS.toSeconds(1);
 
-    @Autowired
-    private DataSource dataSource;
-
     private final String method;
     private final SecurityLdapProperties ldapProperties;
     private final SecurityMemoryProperties memoryProperties;
     private final SecurityJdbcProperties jdbcProperties;
 
+    private final DataSource dataSource;
+
     public SecurityConfiguration(@Value("${security.method}") final String method,
                                  final SecurityLdapProperties ldapProperties,
                                  final SecurityMemoryProperties memoryProperties,
-                                 final SecurityJdbcProperties jdbcProperties) {
+                                 final SecurityJdbcProperties jdbcProperties,
+                                 final DataSource dataSource) {
         Preconditions.checkArgument(ALLOWED_METHODS.contains(method), "Incorrect method. Allowed methods: " + ALLOWED_METHODS);
 
         this.method = method;
         this.ldapProperties = ldapProperties;
         this.memoryProperties = memoryProperties;
         this.jdbcProperties = jdbcProperties;
+
+        this.dataSource = dataSource;
     }
 
     @Override

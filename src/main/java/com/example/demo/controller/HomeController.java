@@ -1,14 +1,14 @@
 package com.example.demo.controller;
 
-import com.example.demo.AbstractBaseController;
+import com.example.demo.BaseMvcController;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 
 @Controller
-public class HomeController extends AbstractBaseController {
+class HomeController implements BaseMvcController {
 
     @Override
-    protected String module() {
+    public String module() {
         return "home";
     }
 
