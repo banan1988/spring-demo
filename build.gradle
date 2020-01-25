@@ -5,8 +5,8 @@ plugins {
     id "maven-publish"
 
     // springfox-swagger2:2.9.2 is not compatible with version 2.2.0.RELEASE so we cannot upgrade it :(
-    id "org.springframework.boot" version "2.1.9.RELEASE"
-    id "io.spring.dependency-management" version "1.0.8.RELEASE"
+    id "org.springframework.boot" version "2.2.4.RELEASE"
+    id "io.spring.dependency-management" version "1.0.9.RELEASE"
 
     // code coverage
     id "jacoco"
@@ -23,13 +23,13 @@ plugins {
     // Release & Publish
     // ./gradlew currentVersion
     // ./gradlew release
-    id "pl.allegro.tech.build.axion-release" version "1.10.2"
+    id "pl.allegro.tech.build.axion-release" version "1.10.3"
 }
 
 project.group = artifactGroup
 
-sourceCompatibility = JavaVersion.VERSION_12
-targetCompatibility = JavaVersion.VERSION_12
+sourceCompatibility = JavaVersion.VERSION_11
+targetCompatibility = JavaVersion.VERSION_11
 
 def isNonStable = { String version ->
     def stableKeyword = ['RELEASE', 'FINAL', 'GA'].any { it -> version.toUpperCase().contains(it) }
@@ -66,6 +66,8 @@ repositories {
 
     mavenCentral()
     jcenter()
+
+    maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local/" }
 }
 
 java {
@@ -127,9 +129,11 @@ dependencies {
      added by me
      ************************/
 
-    // swagger
+    // swagger 2.x
     implementation "io.springfox:springfox-swagger2:${swaggerVersion}"
     implementation "io.springfox:springfox-swagger-ui:${swaggerVersion}"
+    // swagger 3.x
+    implementation "io.springfox:springfox-data-rest:${swaggerVersion}"
 
     // junit5
     testImplementation "org.junit.jupiter:junit-jupiter:${junit5Version}"
@@ -139,15 +143,18 @@ dependencies {
     compile "org.thymeleaf.extras:thymeleaf-extras-springsecurity5:3.0.4.RELEASE"
 
     // CSS styles and JS scripts
-    compile "org.webjars:bootstrap:4.3.1"
+    compile "org.webjars:bootstrap:4.4.1"
     compile "org.webjars:jquery:3.4.1"
-    compile "org.webjars:angularjs:1.7.7"
+    compile "org.webjars:angularjs:1.7.9"
 
     // LDAP authentication
     compile("org.springframework.ldap:spring-ldap-core")
     compile("org.springframework.security:spring-security-ldap")
     // LDAP local server
     compile("com.unboundid:unboundid-ldapsdk")
+
+    // libraries
+    compile "com.google.guava:guava:28.2-jre"
 }
 
 def username = System.getenv("USERNAME") ? System.getenv("USERNAME") : System.getProperty("user.name")

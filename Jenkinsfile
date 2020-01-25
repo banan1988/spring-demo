@@ -3,7 +3,7 @@
 def _GLOBAL_TIMEOUT_MINUTES_ = 60
 def _SCM_TIMEOUT_MINUTES_ = 10
 def _SONAR_TIMEOUT_MINUTES_ = 10
-def _JDK_ = 'openjdk-12'
+def _JDK_ = 'openjdk-11'
 
 pipeline {
 //    agent any
