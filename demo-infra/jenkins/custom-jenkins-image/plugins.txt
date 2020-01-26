@@ -1,18 +1,24 @@
 # List of plugins to install you can find on page: https://plugins.jenkins.io/
 
 ansicolor:latest
-blueocean-pipeline-editor:latest
+blueocean:latest
+slack:latest
 ws-cleanup:latest
 git:latest
-gradle:latest
-htmlpublisher:latest
 jacoco:latest
 jdk-tool:latest
-junit:latest
 ldap:latest
-credentials:latest
 build-timeout:latest
-ssh-slaves:latest
-versioncolumn:latest
+gradle:latest
+repository-connector:latest
+htmlpublisher:latest
+junit:latest
 build-user-vars-plugin:latest
 timestamper:latest
+throttle-concurrents:latest
+sonar:latest
+
+blueocean-pipeline-editor:latest
+credentials:latest
+ssh-slaves:latest
+versioncolumn:latest
