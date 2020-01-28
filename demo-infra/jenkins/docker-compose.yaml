@@ -34,17 +34,17 @@ services:
         hard: 10240
     user: jenkins
 
-  jenkins-slave:
-    image: "jenkins/ssh-slave"
-    container_name: "jenkins-slave"
-    restart: unless-stopped
-    volumes:
-      - jenkins_slave:/home/jenkins
-    environment:
-      - JENKINS_SLAVE_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC8yQi+NDmUwc17T/R+UyIA7fmiw/G6ZxT7gPizIM4hqKSCX6RwnSDDX8aTWsITVjJcn/jVJktDrjoEg7wg9cj8hps8HxELZ90x4qaq6OK68RMxf2FQip4afGNcURF88vsAyVzzcirdcRS7ixVBVXE8XASSp4RSniOPoVcubFLWi3Gk8eUzSt79SurvqwIfEOrh9eZm8NLA3NLcwjwZRJ7OzaQIkaqN3BqFweFjI6dZd97+4OfDmfw/7z5n8Hu9cZtagf4KmspgI89k4tRj+xIztveJbt99T6was7KAkNucX3S6blvYIP8yY7kmj3kYmlxSmBeL51XpqMTVRQCEp+AmMIWcF7u2q4F2CyCNg+ZeS0my1MB9xhAt+p6H2tRgWDBgM5VIAnDdHCMoJ9EKl1q0Sf8GYNdBVBDZc39ArOHV3vN2cnk78u+NqGNz+hna5gP1Zq0JJ8ts0jsWMf2uBgLmrhxrQNWoiMy8B1ZOxUw0Bo8EDEP4sf8U80TE0HcknD8i7s3Jf063oriMhnt47a1K6jPmjq/98kIH3DYUCfxNEKfjklYivuzWGWBKdvygrkisLK9OZrzFW4tXe9j6/yxkVHIrETaCh5s440Qb8Y7fgn/dkH+E1NinbfZ+Z76P2EM4ll+13x9iY0oL2sO61HOHKxldms9fLi+uD9yCCURXWw== sping-demo@example.com
-    networks:
-      - backend
-    user: root
+#  jenkins-slave:
+#    image: "jenkins/ssh-slave"
+#    container_name: "jenkins-slave"
+#    restart: unless-stopped
+#    volumes:
+#      - jenkins_slave:/home/jenkins
+#    environment:
+#      - JENKINS_SLAVE_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQC8yQi+NDmUwc17T/R+UyIA7fmiw/G6ZxT7gPizIM4hqKSCX6RwnSDDX8aTWsITVjJcn/jVJktDrjoEg7wg9cj8hps8HxELZ90x4qaq6OK68RMxf2FQip4afGNcURF88vsAyVzzcirdcRS7ixVBVXE8XASSp4RSniOPoVcubFLWi3Gk8eUzSt79SurvqwIfEOrh9eZm8NLA3NLcwjwZRJ7OzaQIkaqN3BqFweFjI6dZd97+4OfDmfw/7z5n8Hu9cZtagf4KmspgI89k4tRj+xIztveJbt99T6was7KAkNucX3S6blvYIP8yY7kmj3kYmlxSmBeL51XpqMTVRQCEp+AmMIWcF7u2q4F2CyCNg+ZeS0my1MB9xhAt+p6H2tRgWDBgM5VIAnDdHCMoJ9EKl1q0Sf8GYNdBVBDZc39ArOHV3vN2cnk78u+NqGNz+hna5gP1Zq0JJ8ts0jsWMf2uBgLmrhxrQNWoiMy8B1ZOxUw0Bo8EDEP4sf8U80TE0HcknD8i7s3Jf063oriMhnt47a1K6jPmjq/98kIH3DYUCfxNEKfjklYivuzWGWBKdvygrkisLK9OZrzFW4tXe9j6/yxkVHIrETaCh5s440Qb8Y7fgn/dkH+E1NinbfZ+Z76P2EM4ll+13x9iY0oL2sO61HOHKxldms9fLi+uD9yCCURXWw== sping-demo@example.com
+#    networks:
+#      - backend
+#    user: root
 
 networks:
   default:
@@ -56,4 +56,4 @@ networks:
 
 volumes:
   jenkins_master:
-  jenkins_slave:
+#  jenkins_slave:
