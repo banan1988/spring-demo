@@ -5,6 +5,7 @@ plugins {
     id "maven-publish"
 
     // springfox-swagger2:2.9.2 is not compatible with version 2.2.0.RELEASE so we cannot upgrade it :(
+    // but we can use springfox-swagger2:3.0.0-SNAPSHOT (at your own risk) :)
     id "org.springframework.boot" version "2.2.4.RELEASE"
     id "io.spring.dependency-management" version "1.0.9.RELEASE"
 
@@ -20,9 +21,10 @@ plugins {
     // ./gradlew dependencyUpdates -Drevision=release
     id "com.github.ben-manes.versions" version "0.27.0"
 
-    // Release & Publish
+    // Release by axion
     // ./gradlew currentVersion
     // ./gradlew release
+    // ./gradlew release -Prelease.forceVersion=3.0.0
     id "pl.allegro.tech.build.axion-release" version "1.10.3"
 }
 
@@ -209,8 +211,10 @@ sonarqube {
         property "sonar.host.url", "${sonarHostUrl}"
         property "sonar.login", "${sonarLogin}"
 
+        property "sonar.sourceEncoding", "UTF-8"
+
         // Branch analysis is available in Developer Edition and above
-//        property "sonar.branch.name", "${branchName}"
+        property "sonar.branch.name", "${branchName}"
 
         property "sonar.jacoco.reportPaths", "${jacocoExecReportPath}"
         property "sonar.coverage.jacoco.xmlReportPaths", "${jacocoXmlReportPath}"

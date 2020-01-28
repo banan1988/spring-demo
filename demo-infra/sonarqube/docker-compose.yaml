@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 services:
   sonarqube:
     image: "sonarqube:lts"
@@ -8,10 +8,12 @@ services:
       # local port:docker port
       - "9000:9000"
     volumes:
-      # local volume:docker volume
+      # global named volume:docker volume
       - sonarqube_conf:/opt/sonarqube/conf
       - sonarqube_data:/opt/sonarqube/data
-      - sonarqube_extensions:/opt/sonarqube/extensions
+      # local relative catalog:docker volume
+      - ./plugins/sonarqube-community-branch-plugin-1.2.0.jar:/opt/sonarqube/extensions/plugins/sonarqube-community-branch-plugin-1.2.0.jar
+      - ./plugins/sonarqube-community-branch-plugin-1.2.0.jar:/opt/sonarqube/lib/common/sonarqube-community-branch-plugin-1.2.0.jar
     #    environment:
     #      - sonar.jdbc.url=jdbc:postgresql://db:5432/sonar
     networks:
@@ -40,6 +42,5 @@ networks:
 volumes:
   sonarqube_conf:
   sonarqube_data:
-  sonarqube_extensions:
 #  postgres:
 #  postgres_data:
