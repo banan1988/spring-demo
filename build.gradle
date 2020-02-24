@@ -69,6 +69,7 @@ repositories {
     mavenCentral()
     jcenter()
 
+    // // swagger 3.x
     maven { url "https://oss.jfrog.org/artifactory/oss-snapshot-local/" }
 }
 
@@ -157,6 +158,9 @@ dependencies {
 
     // libraries
     compile "com.google.guava:guava:28.2-jre"
+
+    // auto mapping of model: e.g entity <-> dto
+    compile 'org.modelmapper:modelmapper:2.3.0'
 }
 
 def username = System.getenv("USERNAME") ? System.getenv("USERNAME") : System.getProperty("user.name")

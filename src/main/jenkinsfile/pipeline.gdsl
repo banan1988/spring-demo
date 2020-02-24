@@ -6,6 +6,8 @@
 //The global script scope
 def ctx = context(scope: scriptScope())
 contributor(ctx) {
+    // If you see warning ("'parallel' cannot be applied to '(groovy.lang.Closure)' ") in Intellij just add below line
+    method(name: 'parallel', type: 'Object', params: [body:'Closure'], doc: 'Parallel root element')
     method(name: 'parallel', type: 'Object', params: ['closures': 'java.util.Map'], doc: 'Execute in parallel')
     method(name: 'parallel', type: 'Object', namedParams: [parameter(name: 'closures', type: 'java.util.Map'), parameter(name: 'failFast', type: 'boolean'),], doc: 'Execute in parallel')
     method(name: 'build', type: 'Object', params: [job: 'java.lang.String'], doc: 'Build a job')
