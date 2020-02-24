@@ -4,6 +4,7 @@ def _GLOBAL_TIMEOUT_MINUTES_ = 60
 def _SCM_TIMEOUT_MINUTES_ = 10
 def _SONAR_TIMEOUT_MINUTES_ = 10
 def _JDK_ = 'openjdk-11'
+def slackNotification
 
 pipeline {
 //    agent any
@@ -48,12 +49,36 @@ pipeline {
                 }
 
                 timeout(time: _SCM_TIMEOUT_MINUTES_, unit: 'MINUTES') {
-                    checkout scm
+//                    checkout scm
+                    checkout([
+                            $class                           : 'GitSCM',
+                            branches                         : [[name: env.BRANCH_NAME]],
+                            doGenerateSubmoduleConfigurations: scm.doGenerateSubmoduleConfigurations,
+                            extensions                       : scm.extensions,
+                            submoduleCfg                     : scm.submoduleCfg,
+                            userRemoteConfigs                : [[
+                                                                        name   : 'origin',
+                                                                        refspec: '+refs/heads/master:refs/remotes/origin/master +refs/heads/*:refs/remotes/origin/*',
+                                                                        url    : 'https://github.com/banan1988/spring-demo.git'
+                                                                ]]
+                    ])
                 }
             }
         }
 
-        stage('Build & test') {
+        stage('Load libraries') {
+            steps {
+                script {
+                    env.FAILED_STAGE_NAME = env.STAGE_NAME
+                }
+
+                script {
+                    slackNotification = load("${env.WORKSPACE}/src/main/jenkinsfile/slackNotification.groovy")
+                }
+            }
+        }
+
+        stage('Build') {
             steps {
                 script {
                     env.FAILED_STAGE_NAME = env.STAGE_NAME
@@ -63,7 +88,30 @@ pipeline {
                     // Error: ./gradlew: Permission denied
                     // FIX: git update-index --chmod=+x gradlew
                     // FIX: sh 'chmod +x gradlew'
-                    sh './gradlew build --profile'
+                    sh './gradlew build -x test --profile'
+                }
+            }
+        }
+
+        stage("Parallel tests") {
+            parallel {
+                stage("JUnit tests") {
+                    steps {
+                        script {
+                            env.FAILED_STAGE_NAME = env.STAGE_NAME
+                        }
+
+                        echo "JUnit tests"
+                    }
+                }
+                stage("Integration tests") {
+                    steps {
+                        script {
+                            env.FAILED_STAGE_NAME = env.STAGE_NAME
+                        }
+
+                        echo "Integration tests"
+                    }
                 }
             }
         }
@@ -147,16 +195,24 @@ pipeline {
 
     post {
         success {
-            slackNotification('SUCCESS', "Successful !")
+            script {
+                slackNotification('SUCCESS', "Successful !")
+            }
         }
         unstable {
-            slackNotification('WARN', "Unstable on stage *${env.FAILED_STAGE_NAME}* !")
+            script {
+                slackNotification('WARN', "Unstable on stage *${env.FAILED_STAGE_NAME}* !")
+            }
         }
         failure {
-            slackNotification('ERROR', "Failed on stage *${env.FAILED_STAGE_NAME}* !")
+            script {
+                slackNotification('ERROR', "Failed on stage *${env.FAILED_STAGE_NAME}* !")
+            }
         }
         aborted {
-            slackNotification('ERROR', "Aborted on stage *${env.FAILED_STAGE_NAME}* !")
+            script {
+                slackNotification('ERROR', "Aborted on stage *${env.FAILED_STAGE_NAME}* !")
+            }
         }
         always {
             echo "Archive JARs:"
@@ -190,18 +246,4 @@ pipeline {
             junit '**/build/test-results/**/*.xml'
         }
     }
-}
-
-def slackNotification(String level, String msg) {
-    def color = '#439fe0'
-    def message = "Build <${env.BUILD_URL}|${env.JOB_NAME}#${env.BUILD_NUMBER}>/<${env.RUN_DISPLAY_URL}|BlueOcean>: ${msg}" as Object
-    if (level == 'SUCCESS') {
-        color = '#27a21b'
-    } else if (level == 'WARN') {
-        color = '#ff4500'
-    } else if (level == 'ERROR') {
-        color = '#ce2231'
-    }
-
-    slackSend channel: 'jenkins', color: color, message: message, teamDomain: 'banan1988', tokenCredentialId: '11ca9396-177f-417d-bc3c-9d65f7369f0a'
 }
