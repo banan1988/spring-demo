@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 services:
   nexus:
     image: "sonatype/nexus:oss"
@@ -8,7 +8,7 @@ services:
       # local port:docker port
       - "8081:8081"
     volumes:
-      # local volume:docker volume
+      # global named volume:docker volume
       - nexus_data:/sonatype-work
     environment:
       - CONTEXT_PATH=/nexus

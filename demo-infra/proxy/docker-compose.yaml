@@ -1,4 +1,4 @@
-version: "3"
+version: "3.7"
 services:
   proxy:
     image: "nginx:stable"
@@ -9,7 +9,7 @@ services:
       - "80:80"
       - "443:443"
     volumes:
-      # local volume:docker volume
+      # local relative catalog:docker volume
       - ./conf.d/jenkins.conf:/etc/nginx/conf.d/jenkins.conf
       - ./conf.d/nexus.conf:/etc/nginx/conf.d/nexus.conf
       - ./conf.d/sonarqube.conf:/etc/nginx/conf.d/sonarqube.conf

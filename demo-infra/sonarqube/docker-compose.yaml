@@ -14,33 +14,25 @@ services:
       # local relative catalog:docker volume
       - ./plugins/sonarqube-community-branch-plugin-1.2.0.jar:/opt/sonarqube/extensions/plugins/sonarqube-community-branch-plugin-1.2.0.jar
       - ./plugins/sonarqube-community-branch-plugin-1.2.0.jar:/opt/sonarqube/lib/common/sonarqube-community-branch-plugin-1.2.0.jar
-    #    environment:
-    #      - sonar.jdbc.url=jdbc:postgresql://db:5432/sonar
+    environment:
+      # The embedded H2 database is used by default - comment below sonar.jdbc.* lines to use it
+      - sonar.jdbc.url=jdbc:postgresql://postgres:5432/sonarqube
+      - sonar.jdbc.username=sonar
+      - sonar.jdbc.password=sonar
     networks:
       - default
-      - backend
-#  db:
-#    image: "postgres:11"
-#    restart: unless-stopped
-#    volumes:
-#      - postgres:/var/lib/postgresql
-#      - postgres_data:/var/lib/postgresql/data
-#    environment:
-#      - POSTGRES_USER=sonar
-#      - POSTGRES_PASSWORD=sonar
-#    networks:
-#      - backend
+    ulimits:
+      nproc: 65535
+      nofile:
+        soft: 65535
+        hard: 65535
 
 networks:
   default:
     external:
       # name of network created first by create-network.sh script
       name: demo
-  backend:
-    driver: bridge
 
 volumes:
   sonarqube_conf:
   sonarqube_data:
-#  postgres:
-#  postgres_data:
