@@ -12,4 +12,7 @@ if [[ ${EXIT_CODE} != 0 ]]; then
   exit 1
 fi
 
+echo "----------------------------------------"
 docker ps
+echo "----------------------------------------"
+docker volume ls

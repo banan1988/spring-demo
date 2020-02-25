@@ -1,18 +1,25 @@
-version: "3"
+version: "3.7"
 services:
   postgres:
     image: "postgres:11"
-    container_name: "pg11"
+    container_name: "postgres"
     restart: unless-stopped
     ports:
       # local port:docker port
       - "5432:5432"
     volumes:
-      # local volume:docker volume
+      # global named volume:docker volume
       - postgres:/var/lib/postgresql
       - postgres_data:/var/lib/postgresql/data
     environment:
+      - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+
+networks:
+  default:
+    external:
+      # name of network created first by create-network.sh script
+      name: demo
 
 volumes:
   postgres:
