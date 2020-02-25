@@ -1,0 +1,18 @@
+version: "3.7"
+services:
+  postgres:
+    image: "dpage/pgadmin4:latest"
+    container_name: "pgadmin"
+    restart: unless-stopped
+    ports:
+      # local port:docker port
+      - "5050:80"
+    environment:
+      - PGADMIN_DEFAULT_EMAIL=postgres@b2d.com.pl
+      - PGADMIN_DEFAULT_PASSWORD=postgres
+
+networks:
+  default:
+    external:
+      # name of network created first by create-network.sh script
+      name: demo
