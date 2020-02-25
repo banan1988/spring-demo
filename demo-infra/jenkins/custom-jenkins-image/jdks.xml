@@ -1,0 +1,19 @@
+<?xml version='1.1' encoding='UTF-8'?>
+<hudson>
+    <jdks>
+        <jdk>
+            <name>openjdk-11</name>
+            <home></home>
+            <properties>
+                <hudson.tools.InstallSourceProperty>
+                    <installers>
+                        <hudson.tools.ZipExtractionInstaller>
+                            <url>https://download.java.net/java/GA/jdk11/9/GPL/openjdk-11.0.2_linux-x64_bin.tar.gz</url>
+                            <subdir>jdk-11.0.2</subdir>
+                        </hudson.tools.ZipExtractionInstaller>
+                    </installers>
+                </hudson.tools.InstallSourceProperty>
+            </properties>
+        </jdk>
+    </jdks>
+</hudson>

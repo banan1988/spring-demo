@@ -1,8 +1,14 @@
 # List of plugins to install you can find on page: https://plugins.jenkins.io/
 
 ansicolor:latest
-blueocean-pipeline-editor:latest
-ws-cleanup:latest
+antisamy-markup-formatter:latest
+blueocean:latest
+build-timeout:latest
+build-user-vars-plugin:latest
+cloudbees-folder:latest
+credentials-binding:latest
+disk-usage:latest
+github-branch-source:latest
 git:latest
 gradle:latest
 htmlpublisher:latest
@@ -10,9 +16,18 @@ jacoco:latest
 jdk-tool:latest
 junit:latest
 ldap:latest
-credentials:latest
-build-timeout:latest
+locale:latest
+matrix-auth:latest
+pam-auth:latest
+pipeline-github-lib:latest
+pipeline-stage-view:latest
+rebuild:latest
+slack:latest
+sonar:latest
+sonar-quality-gates:latest
+ssh-agent:latest
 ssh-slaves:latest
-versioncolumn:latest
-build-user-vars-plugin:latest
+throttle-concurrents:latest
 timestamper:latest
+workflow-aggregator:latest
+ws-cleanup:latest

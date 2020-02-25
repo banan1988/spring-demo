@@ -1,11 +1,12 @@
-version: "3"
+version: "3.7"
 services:
   jenkins-master:
     # use custom-docker
-    #    build: ./custom-jenkins-image
-    #    dockerfile: Dockerfile
+    build:
+      context: ./custom-jenkins-image
+      dockerfile: Dockerfile
     # or provided
-    image: "jenkins/jenkins:lts"
+    #image: "jenkins/jenkins:lts"
     container_name: "jenkins-master"
     restart: unless-stopped
     ports:
@@ -15,15 +16,15 @@ services:
       # access to a remote Java (JIRA) API
       - "50000:50000"
     volumes:
-      # local volume:docker volume
+      # global named volume:docker volume
       - jenkins_master:/var/jenkins_home
       # for unix instead of DOCKER_HOST
-      # - /var/run/docker.sock:/var/run/docker.sock
+      - /var/run/docker.sock:/var/run/docker.sock
     environment:
       # Start jenkins unlocked - skip wizard with users creation
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       # for windows you have to enable "Expose daemon on tcp://localhost:2375 without TLS" in Docker settings
-      - DOCKER_HOST=tcp://host.docker.internal:2375
+      #- DOCKER_HOST=tcp://host.docker.internal:2375
     networks:
       - default
       - backend
