@@ -19,6 +19,12 @@ services:
       - sonar.jdbc.url=jdbc:postgresql://postgres:5432/sonarqube
       - sonar.jdbc.username=sonar
       - sonar.jdbc.password=sonar
+      # JVM options of Web Server
+      - sonar.web.javaOpts=-server -Xmx1G
+      # JVM options of Compute Engine
+      - sonar.ce.javaOpts=-server -Xmx1G
+      # JVM options of Elasticsearch process
+      - sonar.search.javaOpts=-server -Xms2G -Xmx2G
     networks:
       - default
     ulimits:
