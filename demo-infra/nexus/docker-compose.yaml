@@ -2,11 +2,11 @@ version: "3.7"
 services:
   nexus:
     image: "sonatype/nexus:oss"
-    container_name: "nexus"
-    restart: unless-stopped
     ports:
-      # local port:docker port
-      - "8081:8081"
+      - target: 8081 # docker port
+        published: 8081 # published port
+        protocol: tcp
+        mode: host
     volumes:
       # global named volume:docker volume
       - nexus_data:/sonatype-work
@@ -15,14 +15,30 @@ services:
       - MIN_HEAP=256m
       - MAX_HEAP=768m
       - JAVA_OPTS=-server -XX:MaxPermSize=192m -Djava.net.preferIPv4Stack=true
-    networks:
-      - default
+    deploy:
+      replicas: 1
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+        limits:
+          cpus: '0.50'
+          memory: 1G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        name: "nexus"
+#    networks:
+#      - default
 
-networks:
-  default:
-    external:
-      # name of network created first by create-network.sh script
-      name: demo
+#networks:
+#  default:
+#    external:
+#      # name of network created first by create-network.sh script
+#      name: demo
 
 volumes:
   nexus_data:
