@@ -69,8 +69,9 @@ sudo systemctl enable docker
 ## 5. Works ?
 Check running containers:
 ```shell script
-$ docker ps -a
+docker ps -a
 ```
+*Output:*
 ```shell script
 CONTAINER ID        IMAGE               COMMAND             CREATED             STATUS              PORTS               NAMES
 ```
@@ -78,6 +79,7 @@ Or download a test image and runs it in a container:
 ```shell script
 docker run --rm hello-world
 ```
+*Output:*
 ```shell script
 Hello from Docker!
 This message shows that your installation appears to be working correctly.
@@ -99,4 +101,20 @@ Share images, automate workflows, and more with a free Docker ID:
 
 For more examples and ideas, visit:
  https://docs.docker.com/get-started/
+```
+
+# Install Compose on Linux systems
+## 1. Run this command to download the current stable release of Docker Compose:
+```shell script
+sudo curl -L "https://github.com/docker/compose/releases/download/1.25.4/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+```
+  
+## 2. Apply executable permissions to the binary:
+```shell script
+sudo chmod +x /usr/local/bin/docker-compose
+```
+
+## 3. Works ?
+```shell script
+docker-compose --version
 ```

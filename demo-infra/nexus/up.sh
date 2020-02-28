@@ -1,13 +1,15 @@
 #!/bin/bash
 
-STACK="${1:-demo}"
+STACK="${1:-demo-nexus}"
 
 docker stack deploy --compose-file docker-compose.yaml "${STACK}"
 EXIT_CODE=$?
 
 if [[ ${EXIT_CODE} != 0 ]]; then
-    exit 1
+  exit 1
 fi
+
+sleep 5
 
 echo "----------------------------------------"
 echo "Running stacks:"
@@ -22,4 +24,4 @@ docker stack ps "${STACK}"
 echo "----------------------------------------"
 echo "Running dockers:"
 echo "----------------------------------------"
-docker ps
+docker ps | grep "CONTAINER\|${STACK}"

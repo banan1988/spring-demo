@@ -1,24 +1,27 @@
 #!/bin/bash
 
-. ../functions.sh
+STACK="${1:-demo-jenkins}"
 
-echo "Let's up docker-compose:"
-docker-compose up -d
+docker stack deploy --compose-file docker-compose.yaml "${STACK}"
 EXIT_CODE=$?
 
 if [[ ${EXIT_CODE} != 0 ]]; then
   exit 1
 fi
 
-echo "Docker-compose has finished:"
-MASTER_container_name="jenkins-master"
-MATER_is_running=$(with_backoff docker inspect -f "{{.State.Running}}" "${MASTER_container_name}")
+sleep 20
 
-if [[ "${MATER_is_running}" == "true" ]]; then
-  AdminPassword=/var/jenkins_home/secrets/initialAdminPassword
-  PASSWORD=$(docker exec -it "${MASTER_container_name}" cat "${AdminPassword}" 2> /dev/null || winpty docker exec -it "${MASTER_container_name}" cat \""${AdminPassword}"\")
+echo "----------------------------------------"
+echo "Running stacks:"
+echo "----------------------------------------"
+docker stack ls
 
-  echo "Default credentials are: admin / ${PASSWORD}"
-fi
+echo "----------------------------------------"
+echo "Running dockers in stack[${STACK}]:"
+echo "----------------------------------------"
+docker stack ps "${STACK}"
 
-docker ps
+echo "----------------------------------------"
+echo "Running dockers:"
+echo "----------------------------------------"
+docker ps | grep "CONTAINER\|${STACK}"
