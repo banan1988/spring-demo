@@ -2,11 +2,11 @@ version: "3.7"
 services:
   sonarqube:
     image: "sonarqube:lts"
-    container_name: "sonarqube"
-    restart: unless-stopped
     ports:
-      # local port:docker port
-      - "9000:9000"
+      - target: 9000 # docker port
+        published: 9000 # published port
+        protocol: tcp
+        mode: host
     volumes:
       # global named volume:docker volume
       - sonarqube_conf:/opt/sonarqube/conf
@@ -25,19 +25,40 @@ services:
       - sonar.ce.javaOpts=-server -Xmx1G
       # JVM options of Elasticsearch process
       - sonar.search.javaOpts=-server -Xms2G -Xmx2G
+    deploy:
+      replicas: 1
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 2G
+        limits:
+          cpus: '0.50'
+          memory: 4G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 5
+        window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
+      labels:
+        name: "sonarqube"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:9000"]
+      interval: 2m30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     networks:
       - default
-    ulimits:
-      nproc: 65535
-      nofile:
-        soft: 65535
-        hard: 65535
 
 networks:
   default:
-    external:
-      # name of network created first by create-network.sh script
-      name: demo
+    # name of network created first by create-network.sh or create-swarm-network.sh script
+    name: demo-swarm
+    external: true
 
 volumes:
   sonarqube_conf:

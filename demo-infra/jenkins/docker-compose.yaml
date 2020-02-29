@@ -32,6 +32,8 @@ services:
       - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
       # for windows you have to enable "Expose daemon on tcp://localhost:2375 without TLS" in Docker settings
       #- DOCKER_HOST=tcp://host.docker.internal:2375
+      - CREDENTIALS_GITHUB_USERNAME=${CREDENTIALS_GITHUB_USERNAME}
+      - CREDENTIALS_GITHUB_PASSWORD=${CREDENTIALS_GITHUB_PASSWORD}
     deploy:
       replicas: 1
       resources:
@@ -39,15 +41,25 @@ services:
           cpus: '0.25'
           memory: 512M
         limits:
-          cpus: '0.50'
+          cpus: '0.75'
           memory: 2G
       restart_policy:
         condition: on-failure
         delay: 5s
         max_attempts: 3
         window: 120s
+      update_config:
+        parallelism: 1
+        delay: 10s
+        order: stop-first
       labels:
         name: "jenkins-master"
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8080"]
+      interval: 2m30s
+      timeout: 10s
+      retries: 3
+      start_period: 60s
     networks:
       - default
       - backend
@@ -60,14 +72,14 @@ services:
     environment:
       - JENKINS_SLAVE_SSH_PUBKEY=ssh-rsa AAAAB3NzaC1yc2EAAAADAQABAAACAQDbcN+HUA16PoKWVozN6IByCtBh+UyaMU4xFS1extgX5sdrUMfWkK1fMkF/N1ZUyAjsHIg1k2YFgSgZUBDuxs1ykhjfBdRm7KHKnvsFYUoQBYzgj/sX4rToK3MacFJGDMuYZr/UcrRVRc/EVWivX4WGQHejCggit6xlYY12eJGoS5VHw6cXicaRuNjB9n4op6m+E6S/QbMk9JOMQpfNU/BZamRE99IiKYk96C3tDgCdJTmzaKcI01OZjiUJGmTiOPuR+pQFc21Drf9K+PG6NkugqSxDg1Ya7KQOIaaaKFjKbWMoiz5Uybmj5jAVkSQxlST51dAq6Xr/aIoWD1zgAAQGh+vRuS4M570poTaxKi2DM/10V1KJXv3bHVRx28Iq6m0QaRFQ+n9bCNo+nf5sTDYnL7NK9AMZPMQLKQbxwTRKfceoXXADvDR8BSK78eWzipLGE+Y8o9qrw2HzcWGmk3YDy/rIiWRU59cVIsRab/qNCSll/0AP9JIxOcw+uHPX8xzUyri62mPdpeLsMioPEHz39VbslFGsANcv5OPLWrvUe8laX9wvSNGXaVRR+0A2FY/dqsJnVZlKo8+a9V5PogC0ojiibjxrVrXVJOKJAS0QPVtAYB12vBgO6/8wytfrZ4Ql6YcwFmFTZxuvfRskf6kU7jQr6jBr68jsH78bfzOmXw== jenkinsAgent
     deploy:
-      replicas: 1
+      replicas: 0
       resources:
         reservations:
           cpus: '0.25'
           memory: 512M
         limits:
           cpus: '0.50'
-          memory: 2G
+          memory: 1G
       restart_policy:
         condition: on-failure
         delay: 5s
