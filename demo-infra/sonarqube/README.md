@@ -21,6 +21,11 @@ Execute command before run up.sh:
 sudo sysctl -w vm.max_map_count=262144
 sudo sysctl -w fs.file-max=65535
 ```
+Or even better create amd add new lines to /etc/sysctl.d/10-docker-elasticsearch.conf
+```shell script
+vm.max_map_count=262144
+fs.file-max=65535
+```
 Create and add new lines to /etc/security/limits.d/docker.conf
 ```shell script
 #Each line describes a limit for a user in the form:

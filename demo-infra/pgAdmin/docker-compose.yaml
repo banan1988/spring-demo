@@ -10,6 +10,14 @@ services:
     environment:
       - PGADMIN_DEFAULT_EMAIL=postgres@b2d.com.pl
       - PGADMIN_DEFAULT_PASSWORD=postgres
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:5050"]
+      interval: 2m30s
+      timeout: 10s
+      retries: 3
+      start_period: 30s
+    networks:
+      - default
 
 networks:
   default:

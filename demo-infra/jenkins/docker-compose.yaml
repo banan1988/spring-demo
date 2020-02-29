@@ -25,11 +25,11 @@ services:
       # for unix instead of DOCKER_HOST
       - /var/run/docker.sock:/var/run/docker.sock
       # private ssh key for agent (slaves)
-      - ./agent-ssh-key/id_rsa:${CREDENTIALS_AGENT_SSH_KEY_PATH:-/tmp/jenkinsAgent_rsa}:ro
+      - ./agent-ssh-key/id_rsa:${CREDENTIALS_AGENT_SSH_KEY_PATH}:ro
     env_file: .env
     environment:
       # Start jenkins unlocked - skip wizard with users creation
-      - JAVA_OPTS=-Djenkins.install.runSetupWizard=false
+      - JAVA_OPTS=-server -XX:MaxRAMPercentage=90.0 -XX:+HeapDumpOnOutOfMemoryError -Djenkins.install.runSetupWizard=false
       # for windows you have to enable "Expose daemon on tcp://localhost:2375 without TLS" in Docker settings
       #- DOCKER_HOST=tcp://host.docker.internal:2375
       - CREDENTIALS_GITHUB_USERNAME=${CREDENTIALS_GITHUB_USERNAME}
@@ -42,7 +42,7 @@ services:
           memory: 512M
         limits:
           cpus: '0.75'
-          memory: 2G
+          memory: 2.5G
       restart_policy:
         condition: on-failure
         delay: 5s

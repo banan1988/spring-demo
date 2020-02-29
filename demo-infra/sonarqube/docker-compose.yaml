@@ -7,6 +7,11 @@ services:
         published: 9000 # published port
         protocol: tcp
         mode: host
+      # ElasticSearch
+      - target: 9001 # docker port
+        published: 9001 # published port
+        protocol: tcp
+        mode: host
     volumes:
       # global named volume:docker volume
       - sonarqube_conf:/opt/sonarqube/conf
@@ -23,7 +28,7 @@ services:
       - sonar.web.javaOpts=-server -Xmx1G
       # JVM options of Compute Engine
       - sonar.ce.javaOpts=-server -Xmx1G
-      # JVM options of Elasticsearch process
+      # JVM options of ElasticSearch process
       - sonar.search.javaOpts=-server -Xms2G -Xmx2G
     deploy:
       replicas: 1
