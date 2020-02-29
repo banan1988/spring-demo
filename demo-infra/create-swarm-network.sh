@@ -5,8 +5,9 @@ NAME=${1:-demo-swarm}
 echo "Let's create new network for swarm: ${NAME}"
 docker network create \
   --scope=swarm \
+  --attachable \
   -o "com.docker.network.enable_ipv6"="false" \
-  -d bridge "${NAME}"
+  -d overlay "${NAME}"
 EXIT_CODE=$?
 
 if [[ ${EXIT_CODE} != 0 ]]; then

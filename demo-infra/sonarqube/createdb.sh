@@ -12,12 +12,12 @@ function psql_exec() {
     exit 1
   fi
 
-  local pgnetwork=demo
+  local pgnetwork=demo-swarm
   local pghost=postgres
   local pguser=postgres
   local pgpassword=postgres
 
-  docker run -it --rm --network "${pgnetwork}" --name psql -e PGPASSWORD="${pgpassword}" postgres:11 \
+  docker run -it --rm --network "${pgnetwork}" --name psql -e PGPASSWORD="${pgpassword}" postgres:12 \
     psql -h "${pghost}" -U "${pguser}" -c "${command}"
 }
 

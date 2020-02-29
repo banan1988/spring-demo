@@ -13,6 +13,6 @@ services:
 
 networks:
   default:
-    external:
-      # name of network created first by create-network.sh script
-      name: demo
+    # name of network created first by create-network.sh or create-swarm-network.sh script
+    name: demo-swarm
+    external: true

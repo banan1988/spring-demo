@@ -1,12 +1,12 @@
 version: "3.7"
 services:
   postgres:
-    image: "postgres:11"
-    container_name: "postgres"
-    restart: unless-stopped
+    image: "postgres:12"
     ports:
-      # local port:docker port
-      - "5432:5432"
+      - target: 5432 # docker port
+        published: 5432 # published port
+        protocol: tcp
+        mode: host
     volumes:
       # global named volume:docker volume
       - postgres:/var/lib/postgresql
@@ -14,12 +14,30 @@ services:
     environment:
       - POSTGRES_USER=postgres
       - POSTGRES_PASSWORD=postgres
+    deploy:
+      replicas: 1
+      resources:
+        reservations:
+          cpus: '0.25'
+          memory: 512M
+        limits:
+          cpus: '0.50'
+          memory: 1G
+      restart_policy:
+        condition: on-failure
+        delay: 5s
+        max_attempts: 3
+        window: 120s
+      labels:
+        name: "postgres"
+    networks:
+      - default
 
 networks:
   default:
-    external:
-      # name of network created first by create-network.sh script
-      name: demo
+    # name of network created first by create-network.sh or create-swarm-network.sh script
+    name: demo-swarm
+    external: true
 
 volumes:
   postgres:

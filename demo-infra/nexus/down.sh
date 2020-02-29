@@ -1,11 +1,11 @@
 #!/bin/bash
 
+STACK="${1:-demo-nexus}"
+
 echo "Let's remove things created by docker-compose up:"
 printf "\t- Containers for services defined in the Compose file\n"
 printf "\t- Networks defined in the 'networks' section of the Compose file\n"
 printf "\t- The default network, if one is used\n"
-
-STACK="${1:-demo}"
 
 docker stack rm "${STACK}"
 EXIT_CODE=$?

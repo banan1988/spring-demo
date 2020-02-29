@@ -31,14 +31,14 @@ services:
         window: 120s
       labels:
         name: "nexus"
-#    networks:
-#      - default
+    networks:
+      - default
 
-#networks:
-#  default:
-#    external:
-#      # name of network created first by create-network.sh script
-#      name: demo
+networks:
+  default:
+    # name of network created first by create-network.sh or create-swarm-network.sh script
+    name: demo-swarm
+    external: true
 
 volumes:
   nexus_data:

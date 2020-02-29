@@ -9,7 +9,7 @@ if [[ ${EXIT_CODE} != 0 ]]; then
   exit 1
 fi
 
-sleep 5
+sleep 20
 
 echo "----------------------------------------"
 echo "Running stacks:"
