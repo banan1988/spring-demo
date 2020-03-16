@@ -6,6 +6,7 @@ blueocean:latest
 build-timeout:latest
 build-user-vars-plugin:latest
 cloudbees-folder:latest
+configuration-as-code:latest
 credentials-binding:latest
 disk-usage:latest
 github-branch-source:latest
